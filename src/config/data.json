@@ -1,0 +1,12 @@
+{
+    "cache_ratio": 0.9,
+    "window_mode": "fixed",
+    "fixed_window_size": [
+        1024,
+        768
+    ],
+    "last_window_size": [
+        1024,
+        768
+    ]
+}
