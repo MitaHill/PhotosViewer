@@ -58,6 +58,9 @@ from .dialog import DialogMixin
 from .shortcut_key import ShortcutKeyMixin
 from .copy_images_body import CopyImageBodyMixin
 from .sampling_mixin import SamplingMixin
+# 添加窗口大小切换功能和配置管理
+from .window_size_toggle import WindowSizeToggleMixin
+from .config_manager import ConfigMixin
 
 
 class ImageViewer(
@@ -85,7 +88,10 @@ class ImageViewer(
     # 新增的功能混合类
     ShortcutKeyMixin,
     CopyImageBodyMixin,
-    SamplingMixin
+    SamplingMixin,
+    # 添加窗口大小切换功能和配置管理
+    WindowSizeToggleMixin,
+    ConfigMixin
 ):
     """
     图片查看器主类
@@ -106,6 +112,9 @@ class ImageViewer(
         # 初始化所有变量
         self._init_variables()
 
+        # 初始化配置管理器
+        self._init_config_manager()
+
         # 创建UI组件
         self._create_ui()
 
@@ -114,6 +123,9 @@ class ImageViewer(
 
         # 设置快捷键
         self.setup_shortcuts()
+
+        # 设置窗口大小切换功能
+        self.setup_window_size_toggle()
 
         # 更新内存限制并完成初始化
         self.update_memory_limit()
@@ -198,6 +210,9 @@ class ImageViewer(
         self.ctrl_pressed = False
         self.alt_pressed = False
 
+        # 初始化窗口大小切换功能变量
+        self._init_window_size_toggle_variables()
+
     def _create_ui(self):
         """创建所有UI组件"""
         # 创建菜单栏
@@ -267,6 +282,15 @@ class ImageViewer(
         clipboard_info = self.get_clipboard_image_support_info()
         print(f"剪切板支持: {clipboard_info}")
 
+        # 显示窗口模式状态
+        status = self.get_window_size_status()
+        mode = "固定" if status['fixed'] else "动态"
+        print(f"窗口模式: {mode} (Alt+X切换)")
+
+        # 显示配置信息
+        config_info = self.get_config_info()
+        print(f"配置文件: {config_info['config_file']}")
+
     def update_memory_limit(self):
         """更新内存限制"""
         virtual_memory = psutil.virtual_memory()
@@ -281,6 +305,13 @@ class ImageViewer(
         except ValueError:
             self.current_index = 0
         self.show_current_image()
+
+    def adjust_window_size(self, img):
+        """
+        重写窗口大小调整方法，支持固定/动态模式切换
+        """
+        # 调用窗口大小切换功能的重写方法
+        self.adjust_window_size_override(img)
 
     def on_closing(self):
         """处理关闭按钮事件"""
@@ -305,6 +336,10 @@ class ImageViewer(
         # 停用取色器
         if self.sampling_active:
             self._deactivate_sampling()
+
+        # 停止窗口监控
+        if hasattr(self, 'cleanup_window_monitoring'):
+            self.cleanup_window_monitoring()
 
         # 等待对话框监控线程结束
         if self.dialog_monitor_thread.is_alive():

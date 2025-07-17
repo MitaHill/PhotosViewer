@@ -3,7 +3,7 @@
 """
 图片查看器主程序入口
 Image Viewer Application Entry Point
-Version: 1.0
+Version: 2.9
 Author: Clash/善良米塔
 """
 
@@ -11,13 +11,28 @@ import os
 import sys
 import signal
 import tkinter as tk
-from tkinterdnd2 import TkinterDnD
+
+# 检测是否为 PyInstaller 打包环境
+if getattr(sys, 'frozen', False):
+    # PyInstaller 打包环境
+    application_path = sys._MEIPASS
+else:
+    # 开发环境
+    application_path = os.path.dirname(os.path.abspath(__file__))
 
 # 添加src目录到Python路径
-current_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(current_dir, 'src')
+src_dir = os.path.join(application_path, 'src')
 if src_dir not in sys.path:
     sys.path.insert(0, src_dir)
+
+# 尝试导入 tkinterdnd2，如果失败则使用标准 tkinter
+try:
+    from tkinterdnd2 import TkinterDnD
+
+    DND_SUPPORT = True
+except ImportError:
+    DND_SUPPORT = False
+    print("警告: tkinterdnd2 未安装，拖放功能将不可用")
 
 from src import ImageViewer
 
@@ -50,13 +65,14 @@ def parse_arguments():
 
 def create_root_window():
     """创建并配置主窗口"""
-    try:
-        # 尝试使用支持拖放的TkinterDnD
-        root = TkinterDnD.Tk()
-        print("已启用拖放功能")
-    except (ImportError, RuntimeError) as e:
-        print(f"TkinterDnD初始化失败: {e}")
-        print("使用标准Tkinter窗口")
+    if DND_SUPPORT:
+        try:
+            root = TkinterDnD.Tk()
+            print("已启用拖放功能")
+        except Exception as e:
+            print(f"TkinterDnD初始化失败: {e}")
+            root = tk.Tk()
+    else:
         root = tk.Tk()
 
     # 基本窗口配置
@@ -66,7 +82,13 @@ def create_root_window():
 
     # 设置程序图标
     try:
-        icon_path = os.path.join(src_dir, 'img', 'logo.ico')
+        if getattr(sys, 'frozen', False):
+            # PyInstaller 环境
+            icon_path = os.path.join(sys._MEIPASS, 'src', 'img', 'logo.ico')
+        else:
+            # 开发环境
+            icon_path = os.path.join(src_dir, 'img', 'logo.ico')
+
         if os.path.exists(icon_path):
             root.iconbitmap(icon_path)
         else:

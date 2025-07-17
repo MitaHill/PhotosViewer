@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-按钮和菜单管理功能模块
-Button and Menu Management Module
+按钮和菜单管理功能模块 - 更新菜单项
+Button and Menu Management Module - Updated Menu Items
 """
 
 import tkinter as tk
@@ -18,14 +18,22 @@ class ButtonMixin:
         # 文件菜单
         file_menu = tk.Menu(self.menubar, tearoff=0)
         file_menu.add_command(label="打开", command=self.open_image)
+        file_menu.add_separator()
         file_menu.add_command(label="重置缓存", command=self.reset_cache)
         file_menu.add_command(label="删除当前图片", command=self.delete_current_image)
         file_menu.add_command(label="复制图片路径到剪切板", command=self.copy_image_path_to_clipboard)
         file_menu.add_command(label="在目录中定位图片", command=self.locate_image_in_directory)
         file_menu.add_command(label="重命名当前图片", command=self.rename_current_image)
+        file_menu.add_separator()
         file_menu.add_command(label="重载内存", command=self.reload_memory)
         file_menu.add_command(label="调整缓存占空闲内存配比", command=self.adjust_cache_ratio)
         file_menu.add_command(label="图片列表", command=self.show_image_list)
+        file_menu.add_separator()
+        # 更新窗口相关菜单项
+        file_menu.add_command(
+            label="开启/关闭动态窗口",
+            command=self.show_window_mode_dialog
+        )
 
         # 播放控制菜单
         play_menu = tk.Menu(self.menubar, tearoff=0)

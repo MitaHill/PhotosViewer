@@ -1,0 +1,2 @@
+python -m nuitka --onefile --enable-plugin=tk-inter --windows-console-mode=disable --windows-icon-from-ico=Z:\Project\Programs\Python-Project\PhotosViewer\src\img\logo.ico --include-data-dir=src=src --include-package=PIL --include-package=psutil --assume-yes-for-downloads --output-filename=PhotoViewer.exe app.py
+pause>nul
