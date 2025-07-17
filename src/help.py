@@ -24,7 +24,7 @@ class HelpMixin:
 
         about_text = (
             "图片查看器\n"
-            "====v2.9====\n"
+            "====v1.0====\n"
             "\n"
             "这是一个功能强大的图片查看器\n"
             "1.高效的图像加载与缓存管理\n\n"
@@ -73,7 +73,7 @@ class HelpMixin:
 
         attrib_text = (
             "归属信息\n"
-            "====v2.9====\n"
+            "====v1.0====\n"
             "\n"
             "制作来自于 Clash/善良米塔\n"
             "https://clash.ink\n"
@@ -106,7 +106,7 @@ class HelpMixin:
 
         attrib_text = (
             "图片查看器\n"
-            "====v2.9====\n"
+            "====v1.0====\n"
             "本项目的地址\n"
             "\n"
             "https://github.com/clash16/photo\n"

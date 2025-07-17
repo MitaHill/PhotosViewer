@@ -3,7 +3,7 @@
 """
 图片查看器主程序入口
 Image Viewer Application Entry Point
-Version: 2.9
+Version: 1.0
 Author: Clash/善良米塔
 """
 
