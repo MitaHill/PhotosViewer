@@ -1,0 +1,13 @@
+# PhotosViewer 依赖包
+# PhotosViewer Dependencies
+
+# 核心依赖 / Core Dependencies
+Pillow>=9.0.0          # 图片处理库 / Image processing library
+psutil>=5.8.0          # 系统资源监控 / System resource monitoring
+
+# 可选依赖 / Optional Dependencies
+tkinterdnd2>=0.3.0     # 拖放功能支持 / Drag and drop support
+pywin32>=300; sys_platform == 'win32'  # Windows 剪贴板支持 / Windows clipboard support
+
+# 打包工具 / Packaging Tools (for development)
+# pyinstaller>=5.0.0   # 用于打包成可执行文件 / For creating executable files
