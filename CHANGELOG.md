@@ -88,8 +88,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## 即将推出 / Coming Soon
+**项目状态 / Project Status**: 维护模式（半归档）/ Maintenance Mode (Semi-Archived)
 
-查看 [README.md](README.md#开发计划) 了解未来开发计划。
+本项目目前处于维护模式，核心功能已完善并稳定运行。将继续接受 bug 修复和重要更新，但不会进行大规模的新功能开发。
 
-See [README.md](README.md#开发计划) for future development plans.
+This project is currently in maintenance mode. Core features are complete and stable. Bug fixes and important updates will continue to be accepted, but no major new feature development is planned.
