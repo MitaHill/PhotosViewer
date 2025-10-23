@@ -1,5 +1,9 @@
 # PhotosViewer / 图片查看器
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
+[![Status: Maintenance](https://img.shields.io/badge/status-maintenance-blue.svg)](https://github.com/MitaHill/PhotosViewer)
+
 [English](#english) | [中文](#中文)
 
 ---
@@ -7,6 +11,8 @@
 ## 中文
 
 一个功能强大、易于使用的 Python 图片查看器应用程序，具有丰富的图片处理和管理功能。
+
+> **项目状态**: 本项目目前处于维护模式。核心功能已完善并稳定运行，将继续接受 bug 修复和重要更新。
 
 ### 📖 项目简介
 
@@ -222,31 +228,20 @@ PhotosViewer/
 - **性能优化**: LRU 缓存 + 多线程预加载
 - **跨平台**: 支持 Windows/macOS/Linux
 
+### 📊 项目状态
+
+**当前版本**: v2.9
+**状态**: 维护模式（半归档）
+
+本项目目前处于维护模式。核心功能已完善并稳定运行，将继续接受 bug 修复和重要更新，但不会进行大规模的新功能开发。
+
 ### 🤝 贡献指南
 
-欢迎提交 Issue 和 Pull Request！详细信息请查看 [CONTRIBUTING.md](CONTRIBUTING.md)
+欢迎提交 Bug 报告和 Pull Request！详细信息请查看 [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ### 📝 版本历史
 
 查看 [CHANGELOG.md](CHANGELOG.md) 了解详细的版本更新记录。
-
-**当前版本**: v2.9
-
-### 🎯 开发计划
-
-#### v3.0 计划
-- [ ] 批量图片处理
-- [ ] 图片裁剪功能
-- [ ] 更多图片格式支持 (HEIC, RAW)
-- [ ] 主题系统（深色/浅色模式）
-- [ ] 图片对比功能
-- [ ] 插件系统
-
-#### 未来功能
-- [ ] AI 图片增强
-- [ ] 图片标签和分类
-- [ ] 云存储集成
-- [ ] 图片编辑历史记录
 
 ### 📄 许可证
 
@@ -273,6 +268,8 @@ PhotosViewer/
 ## English
 
 A powerful and user-friendly Python image viewer application with rich image processing and management features.
+
+> **Project Status**: This project is currently in maintenance mode. Core features are complete and stable. Bug fixes and important updates will continue to be accepted.
 
 ### 📖 Introduction
 
