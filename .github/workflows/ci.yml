@@ -11,6 +11,8 @@ jobs:
   lint-and-test:
     name: Lint and Test (Python ${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:

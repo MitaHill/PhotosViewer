@@ -15,6 +15,8 @@ jobs:
   build-windows:
     name: Build Windows Executable
     runs-on: windows-latest
+    permissions:
+      contents: read
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -44,6 +46,8 @@ jobs:
   build:
     name: Build ${{ matrix.os }} Executable
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       matrix:
         include:
