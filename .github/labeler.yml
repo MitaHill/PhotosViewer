@@ -1,0 +1,25 @@
+documentation:
+  - '**/*.md'
+  - 'docs/**/*'
+
+dependencies:
+  - 'requirements.txt'
+  - 'setup.py'
+  - 'pyproject.toml'
+
+tests:
+  - 'tests/**/*'
+  - '**/test_*.py'
+  - '**/*_test.py'
+
+github-actions:
+  - '.github/**/*'
+
+python:
+  - '**/*.py'
+
+config:
+  - 'src/config/**/*'
+  - '**/*.json'
+  - '**/*.yaml'
+  - '**/*.yml'

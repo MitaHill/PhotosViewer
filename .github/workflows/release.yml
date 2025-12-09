@@ -1,0 +1,146 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., v2.9.0)'
+        required: true
+        default: 'v2.9.0'
+
+jobs:
+  build-windows:
+    name: Build Windows Executable
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install nuitka ordered-set zstandard
+
+    - name: Build executable with Nuitka
+      run: |
+        python -m nuitka --onefile --enable-plugin=tk-inter --windows-console-mode=disable --windows-icon-from-ico=src/img/logo.ico --include-data-dir=src=src --include-package=PIL --include-package=psutil --assume-yes-for-downloads --output-filename=PhotosViewer.exe app.py
+
+    - name: Upload Windows artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: PhotosViewer-Windows
+        path: PhotosViewer.exe
+        retention-days: 7
+
+  build:
+    name: Build ${{ matrix.os }} Executable
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact-name: PhotosViewer-Linux
+            artifact-path: PhotosViewer.bin
+            nuitka-args: --onefile --enable-plugin=tk-inter --include-data-dir=src=src --include-package=PIL --include-package=psutil --assume-yes-for-downloads --output-filename=PhotosViewer.bin
+          - os: macos-latest
+            artifact-name: PhotosViewer-macOS
+            artifact-path: PhotosViewer.bin
+            nuitka-args: --onefile --enable-plugin=tk-inter --include-data-dir=src=src --include-package=PIL --include-package=psutil --assume-yes-for-downloads --output-filename=PhotosViewer.bin
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install nuitka ordered-set zstandard
+
+    - name: Install system dependencies (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ccache patchelf
+
+    - name: Build executable with Nuitka
+      run: |
+        python -m nuitka ${{ matrix.nuitka-args }} app.py
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact-name }}
+        path: ${{ matrix.artifact-path }}
+        retention-days: 7
+
+  create-release:
+    name: Create GitHub Release
+    needs: [build-windows, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4.1.3
+
+    - name: Get version
+      id: get_version
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.get_version.outputs.version }}
+        name: Release ${{ steps.get_version.outputs.version }}
+        body: |
+          ## PhotosViewer ${{ steps.get_version.outputs.version }}
+          
+          ### Downloads
+          Download the appropriate file for your operating system:
+          - **Windows**: PhotosViewer.exe (Nuitka compiled single executable)
+          - **Linux**: PhotosViewer.bin (Nuitka compiled single executable)
+          - **macOS**: PhotosViewer.bin (Nuitka compiled single executable)
+          
+          ### Installation
+          1. Download the appropriate file for your operating system
+          2. For Windows: Run PhotosViewer.exe
+          3. For Linux/macOS: Make the file executable (`chmod +x PhotosViewer.bin`) and run it
+          
+          ### Documentation
+          For detailed information about features and usage, see the [README](https://github.com/${{ github.repository }}/blob/main/README.md).
+          
+          For version history and changes, see [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md).
+        files: |
+          PhotosViewer-Windows/PhotosViewer.exe
+          PhotosViewer-Linux/PhotosViewer.bin
+          PhotosViewer-macOS/PhotosViewer.bin
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
