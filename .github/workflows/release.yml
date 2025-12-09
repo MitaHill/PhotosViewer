@@ -1,0 +1,148 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., v2.9.0)'
+        required: true
+        default: 'v2.9.0'
+
+jobs:
+  build-windows:
+    name: Build Windows Executable
+    runs-on: windows-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Build executable with PyInstaller
+      run: |
+        pyinstaller --onefile --windowed --name PhotosViewer --icon=src/img/logo.ico app.py
+
+    - name: Upload Windows artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: PhotosViewer-Windows
+        path: dist/PhotosViewer.exe
+
+  build-linux:
+    name: Build Linux Executable
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Build executable with PyInstaller
+      run: |
+        pyinstaller --onefile --windowed --name PhotosViewer app.py
+
+    - name: Upload Linux artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: PhotosViewer-Linux
+        path: dist/PhotosViewer
+
+  build-macos:
+    name: Build macOS Executable
+    runs-on: macos-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Build executable with PyInstaller
+      run: |
+        pyinstaller --onefile --windowed --name PhotosViewer app.py
+
+    - name: Upload macOS artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: PhotosViewer-macOS
+        path: dist/PhotosViewer
+
+  create-release:
+    name: Create GitHub Release
+    needs: [build-windows, build-linux, build-macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+
+    - name: Get version
+      id: get_version
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.get_version.outputs.version }}
+        name: Release ${{ steps.get_version.outputs.version }}
+        body: |
+          ## PhotosViewer ${{ steps.get_version.outputs.version }}
+          
+          ### Downloads
+          - **Windows**: PhotosViewer.exe
+          - **Linux**: PhotosViewer (Linux binary)
+          - **macOS**: PhotosViewer (macOS binary)
+          
+          ### Installation
+          1. Download the appropriate file for your operating system
+          2. For Windows: Run PhotosViewer.exe
+          3. For Linux/macOS: Make the file executable and run it
+          
+          ### What's Changed
+          See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
+        files: |
+          PhotosViewer-Windows/PhotosViewer.exe
+          PhotosViewer-Linux/PhotosViewer
+          PhotosViewer-macOS/PhotosViewer
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
