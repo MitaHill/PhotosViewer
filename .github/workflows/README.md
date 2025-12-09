@@ -27,9 +27,9 @@ This directory contains automated workflows for the PhotosViewer project.
 - Manual trigger with version input
 
 **Purpose:**
-- Builds executable files for Windows, Linux, and macOS
+- Builds single executable files for Windows, Linux, and macOS using Nuitka
 - Creates GitHub releases with downloadable binaries
-- Automatically packages the application using PyInstaller
+- Automatically compiles the application into optimized standalone executables
 
 **Usage:**
 To create a new release, push a tag:
