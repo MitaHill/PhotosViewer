@@ -1,4 +1,3 @@
-﻿Write-Output "##active_line12##"
 name: Build and Release PhotosViewer
 on:
   push:
