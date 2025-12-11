@@ -1,0 +1,92 @@
+name: Simple Build Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: 'Enable debug mode'
+        required: false
+        default: 'false'
+
+jobs:
+  build-test:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x'
+    
+    - name: Show environment info
+      run: |
+        echo "=== System Information ==="
+        systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+        echo ""
+        echo "=== .NET Information ==="
+        dotnet --info
+        echo ""
+        echo "=== Directory Contents ==="
+        dir
+        echo ""
+        echo "=== Solution Files ==="
+        dir *.sln
+        echo ""
+        echo "=== Project Files ==="
+        dir *.csproj
+    
+    - name: Try to find and build solution
+      run: |
+        echo "Looking for solution files..."
+        $solutionFiles = Get-ChildItem -Filter *.sln
+        if ($solutionFiles.Count -gt 0) {
+          echo "Found solution files:"
+          $solutionFiles | ForEach-Object { echo "  - $_" }
+          
+          # Try to build the first solution
+          $firstSolution = $solutionFiles[0].Name
+          echo "Attempting to build: $firstSolution"
+          dotnet build $firstSolution --configuration Release --verbosity detailed
+        } else {
+          echo "No solution files found. Looking for project files..."
+          $projectFiles = Get-ChildItem -Filter *.csproj -Recurse
+          if ($projectFiles.Count -gt 0) {
+            echo "Found project files:"
+            $projectFiles | ForEach-Object { echo "  - $_" }
+            
+            # Try to build the first project
+            $firstProject = $projectFiles[0].FullName
+            echo "Attempting to build: $firstProject"
+            dotnet build $firstProject --configuration Release --verbosity detailed
+          } else {
+            echo "ERROR: No .sln or .csproj files found!"
+            exit 1
+          }
+        }
+    
+    - name: Check for build outputs
+      run: |
+        echo "=== Checking for build outputs ==="
+        if (Test-Path "bin") {
+          echo "bin directory exists:"
+          Get-ChildItem "bin" -Recurse | ForEach-Object { echo "  - $_" }
+        } else {
+          echo "bin directory not found"
+        }
+        
+        if (Test-Path "obj") {
+          echo "obj directory exists"
+        } else {
+          echo "obj directory not found"
+        }
+    
+    - name: Create simple test file (if build fails)
+      if: failure()
+      run: |
+        echo "Build failed. Creating test file to verify workflow execution..."
+        echo "Workflow executed at: $(Get-Date)" > workflow_test.txt
+        echo "Build attempt completed" >> workflow_test.txt
+        echo "This file confirms the workflow ran successfully even if build failed." >> workflow_test.txt
