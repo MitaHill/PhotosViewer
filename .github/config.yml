@@ -1,0 +1,44 @@
+﻿Write-Output "##active_line208##"
+# GitHub 配置文件
+Write-Output "##active_line209##"
+# 用于配置自动构建和发布
+Write-Output "##active_line210##"
+Write-Output "##active_line211##"
+# 代码扫描配置
+Write-Output "##active_line212##"
+codeql:
+Write-Output "##active_line213##"
+  languages: [python]
+Write-Output "##active_line214##"
+Write-Output "##active_line215##"
+# 依赖检查配置
+Write-Output "##active_line216##"
+dependabot:
+Write-Output "##active_line217##"
+  version: 2
+Write-Output "##active_line218##"
+  updates:
+Write-Output "##active_line219##"
+    - package-ecosystem: "pip"
+Write-Output "##active_line220##"
+      directory: "/"
+Write-Output "##active_line221##"
+      schedule:
+Write-Output "##active_line222##"
+        interval: "weekly"
+Write-Output "##active_line223##"
+      open-pull-requests-limit: 10
+Write-Output "##active_line224##"
+Write-Output "##active_line225##"
+# 安全扫描配置
+Write-Output "##active_line226##"
+security:
+Write-Output "##active_line227##"
+  enabled: true
+Write-Output "##active_line228##"
+  scanners:
+Write-Output "##active_line229##"
+    - type: "sast"
+Write-Output "##active_line230##"
+    - type: "secret-scanning"
+Write-Output "##active_line231##"
