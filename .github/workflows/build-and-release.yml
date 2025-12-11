@@ -1,342 +1,156 @@
 ﻿Write-Output "##active_line12##"
 name: Build and Release PhotosViewer
-Write-Output "##active_line13##"
-Write-Output "##active_line14##"
 on:
-Write-Output "##active_line15##"
   push:
-Write-Output "##active_line16##"
     branches: [ main, master ]
-Write-Output "##active_line17##"
     tags: [ 'v*' ]
-Write-Output "##active_line18##"
   pull_request:
-Write-Output "##active_line19##"
     branches: [ main, master ]
-Write-Output "##active_line20##"
   schedule:
-Write-Output "##active_line21##"
     # 每周一凌晨2点自动构建 (UTC时间)
-Write-Output "##active_line22##"
     - cron: '0 2 * * 1'
-Write-Output "##active_line23##"
   workflow_dispatch:  # 允许手动触发
-Write-Output "##active_line24##"
-Write-Output "##active_line25##"
 jobs:
-Write-Output "##active_line26##"
   build-windows:
-Write-Output "##active_line27##"
     runs-on: windows-latest
-Write-Output "##active_line28##"
     strategy:
-Write-Output "##active_line29##"
       matrix:
-Write-Output "##active_line30##"
         python-version: ['3.8', '3.9', '3.10', '3.11']
-Write-Output "##active_line31##"
-Write-Output "##active_line32##"
     steps:
-Write-Output "##active_line33##"
     - uses: actions/checkout@v4
-Write-Output "##active_line34##"
-Write-Output "##active_line35##"
     - name: Set up Python ${{ matrix.python-version }}
-Write-Output "##active_line36##"
       uses: actions/setup-python@v4
-Write-Output "##active_line37##"
       with:
-Write-Output "##active_line38##"
         python-version: ${{ matrix.python-version }}
-Write-Output "##active_line39##"
-Write-Output "##active_line40##"
     - name: Install dependencies
-Write-Output "##active_line41##"
       run: |
-Write-Output "##active_line42##"
         python -m pip install --upgrade pip
-Write-Output "##active_line43##"
         pip install -r requirements.txt
-Write-Output "##active_line44##"
         pip install pyinstaller>=5.0.0 pywin32>=300
-Write-Output "##active_line45##"
-Write-Output "##active_line46##"
     - name: Build Windows executable
-Write-Output "##active_line47##"
       run: |
-Write-Output "##active_line48##"
         python build.py
-Write-Output "##active_line49##"
-Write-Output "##active_line50##"
     - name: Upload Windows artifacts
-Write-Output "##active_line51##"
       uses: actions/upload-artifact@v4
-Write-Output "##active_line52##"
       with:
-Write-Output "##active_line53##"
         name: PhotosViewer-Windows-${{ matrix.python-version }}
-Write-Output "##active_line54##"
         path: builds/windows/
-Write-Output "##active_line55##"
         retention-days: 7
-Write-Output "##active_line56##"
-Write-Output "##active_line57##"
   build-linux:
-Write-Output "##active_line58##"
     runs-on: ubuntu-latest
-Write-Output "##active_line59##"
     strategy:
-Write-Output "##active_line60##"
       matrix:
-Write-Output "##active_line61##"
         python-version: ['3.8', '3.9', '3.10', '3.11']
-Write-Output "##active_line62##"
-Write-Output "##active_line63##"
     steps:
-Write-Output "##active_line64##"
     - uses: actions/checkout@v4
-Write-Output "##active_line65##"
-Write-Output "##active_line66##"
     - name: Set up Python ${{ matrix.python-version }}
-Write-Output "##active_line67##"
       uses: actions/setup-python@v4
-Write-Output "##active_line68##"
       with:
-Write-Output "##active_line69##"
         python-version: ${{ matrix.python-version }}
-Write-Output "##active_line70##"
-Write-Output "##active_line71##"
     - name: Install system dependencies
-Write-Output "##active_line72##"
       run: |
-Write-Output "##active_line73##"
         sudo apt-get update
-Write-Output "##active_line74##"
         sudo apt-get install -y libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev libxi-dev
-Write-Output "##active_line75##"
-Write-Output "##active_line76##"
     - name: Install Python dependencies
-Write-Output "##active_line77##"
       run: |
-Write-Output "##active_line78##"
         python -m pip install --upgrade pip
-Write-Output "##active_line79##"
         pip install -r requirements.txt
-Write-Output "##active_line80##"
         pip install pyinstaller>=5.0.0
-Write-Output "##active_line81##"
-Write-Output "##active_line82##"
     - name: Build Linux executable
-Write-Output "##active_line83##"
       run: |
-Write-Output "##active_line84##"
         python build.py
-Write-Output "##active_line85##"
-Write-Output "##active_line86##"
     - name: Upload Linux artifacts
-Write-Output "##active_line87##"
       uses: actions/upload-artifact@v4
-Write-Output "##active_line88##"
       with:
-Write-Output "##active_line89##"
         name: PhotosViewer-Linux-${{ matrix.python-version }}
-Write-Output "##active_line90##"
         path: builds/linux/
-Write-Output "##active_line91##"
         retention-days: 7
-Write-Output "##active_line92##"
-Write-Output "##active_line93##"
   build-macos:
-Write-Output "##active_line94##"
     runs-on: macos-latest
-Write-Output "##active_line95##"
     strategy:
-Write-Output "##active_line96##"
       matrix:
-Write-Output "##active_line97##"
         python-version: ['3.8', '3.9', '3.10', '3.11']
-Write-Output "##active_line98##"
-Write-Output "##active_line99##"
     steps:
-Write-Output "##active_line100##"
     - uses: actions/checkout@v4
-Write-Output "##active_line101##"
-Write-Output "##active_line102##"
     - name: Set up Python ${{ matrix.python-version }}
-Write-Output "##active_line103##"
       uses: actions/setup-python@v4
-Write-Output "##active_line104##"
       with:
-Write-Output "##active_line105##"
         python-version: ${{ matrix.python-version }}
-Write-Output "##active_line106##"
-Write-Output "##active_line107##"
     - name: Install dependencies
-Write-Output "##active_line108##"
       run: |
-Write-Output "##active_line109##"
         python -m pip install --upgrade pip
-Write-Output "##active_line110##"
         pip install -r requirements.txt
-Write-Output "##active_line111##"
         pip install pyinstaller>=5.0.0
-Write-Output "##active_line112##"
-Write-Output "##active_line113##"
     - name: Build macOS executable
-Write-Output "##active_line114##"
       run: |
-Write-Output "##active_line115##"
         python build.py
-Write-Output "##active_line116##"
-Write-Output "##active_line117##"
     - name: Upload macOS artifacts
-Write-Output "##active_line118##"
       uses: actions/upload-artifact@v4
-Write-Output "##active_line119##"
       with:
-Write-Output "##active_line120##"
         name: PhotosViewer-macOS-${{ matrix.python-version }}
-Write-Output "##active_line121##"
         path: builds/macos/
-Write-Output "##active_line122##"
         retention-days: 7
-Write-Output "##active_line123##"
-Write-Output "##active_line124##"
   create-release:
-Write-Output "##active_line125##"
     needs: [build-windows, build-linux, build-macos]
-Write-Output "##active_line126##"
     runs-on: ubuntu-latest
-Write-Output "##active_line127##"
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-Write-Output "##active_line128##"
-Write-Output "##active_line129##"
     steps:
-Write-Output "##active_line130##"
     - uses: actions/checkout@v4
-Write-Output "##active_line131##"
-Write-Output "##active_line132##"
     - name: Download all artifacts
-Write-Output "##active_line133##"
       uses: actions/download-artifact@v4
-Write-Output "##active_line134##"
-Write-Output "##active_line135##"
     - name: List downloaded artifacts
-Write-Output "##active_line136##"
       run: ls -R
-Write-Output "##active_line137##"
-Write-Output "##active_line138##"
     - name: Create Release
-Write-Output "##active_line139##"
       id: create_release
-Write-Output "##active_line140##"
       uses: softprops/action-gh-release@v1
-Write-Output "##active_line141##"
       with:
-Write-Output "##active_line142##"
         name: Release ${{ github.ref_name }}
-Write-Output "##active_line143##"
         draft: false
-Write-Output "##active_line144##"
         prerelease: false
-Write-Output "##active_line145##"
         generate_release_notes: true
-Write-Output "##active_line146##"
         files: |
-Write-Output "##active_line147##"
           **/*.zip
-Write-Output "##active_line148##"
           **/*.tar.gz
-Write-Output "##active_line149##"
           **/*.exe
-Write-Output "##active_line150##"
           **/PhotosViewer
-Write-Output "##active_line151##"
       env:
-Write-Output "##active_line152##"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-Write-Output "##active_line153##"
-Write-Output "##active_line154##"
   update-readme:
-Write-Output "##active_line155##"
     runs-on: ubuntu-latest
-Write-Output "##active_line156##"
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
-Write-Output "##active_line157##"
-Write-Output "##active_line158##"
     steps:
-Write-Output "##active_line159##"
     - uses: actions/checkout@v4
-Write-Output "##active_line160##"
-Write-Output "##active_line161##"
     - name: Set up Python
-Write-Output "##active_line162##"
       uses: actions/setup-python@v4
-Write-Output "##active_line163##"
       with:
-Write-Output "##active_line164##"
         python-version: '3.11'
-Write-Output "##active_line165##"
-Write-Output "##active_line166##"
     - name: Generate build status badge
-Write-Output "##active_line167##"
       run: |
-Write-Output "##active_line168##"
         echo "生成构建状态徽章..."
-Write-Output "##active_line169##"
         current_date=$(date +'%Y-%m-%d')
-Write-Output "##active_line170##"
         echo "![构建状态](https://img.shields.io/badge/build-passing-brightgreen.svg)" > build-status.md
-Write-Output "##active_line171##"
         echo "![最后构建](https://img.shields.io/badge/last_build-$current_date-blue.svg)" >> build-status.md
-Write-Output "##active_line172##"
-Write-Output "##active_line173##"
     - name: Update README with build info
-Write-Output "##active_line174##"
       run: |
-Write-Output "##active_line175##"
         echo "更新 README..."
-Write-Output "##active_line176##"
         if [ -f README.md ]; then
-Write-Output "##active_line177##"
           # 在 README 末尾添加构建信息
-Write-Output "##active_line178##"
           echo "" >> README.md
-Write-Output "##active_line179##"
           echo "---" >> README.md
-Write-Output "##active_line180##"
           echo "## 🚀 自动构建" >> README.md
-Write-Output "##active_line181##"
           echo "" >> README.md
-Write-Output "##active_line182##"
           echo "此项目使用 GitHub Actions 进行自动构建和发布。" >> README.md
-Write-Output "##active_line183##"
           echo "" >> README.md
-Write-Output "##active_line184##"
           echo "### 构建状态" >> README.md
-Write-Output "##active_line185##"
           cat build-status.md >> README.md
-Write-Output "##active_line186##"
           echo "" >> README.md
-Write-Output "##active_line187##"
           echo "### 最新版本" >> README.md
-Write-Output "##active_line188##"
           echo "最新版本可通过 [GitHub Releases](https://github.com/${{ github.repository }}/releases) 下载。" >> README.md
-Write-Output "##active_line189##"
         fi
-Write-Output "##active_line190##"
-Write-Output "##active_line191##"
     - name: Commit and push changes
-Write-Output "##active_line192##"
       run: |
-Write-Output "##active_line193##"
         git config --local user.email "action@github.com"
-Write-Output "##active_line194##"
         git config --local user.name "GitHub Action"
-Write-Output "##active_line195##"
         git add README.md
-Write-Output "##active_line196##"
         git commit -m "更新构建状态徽章和构建信息 [skip ci]" || echo "没有更改可提交"
-Write-Output "##active_line197##"
         git push
-Write-Output "##active_line198##"
